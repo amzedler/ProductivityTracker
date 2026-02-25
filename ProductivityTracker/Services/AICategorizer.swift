@@ -2,6 +2,21 @@ import Foundation
 import AppKit
 import Combine
 
+/// Categorization errors
+enum CategorizationError: LocalizedError {
+    case noCategorizationAvailable
+    case offlineModeNoCache
+
+    var errorDescription: String? {
+        switch self {
+        case .noCategorizationAvailable:
+            return "Unable to categorize activity. No online connection or cached patterns available."
+        case .offlineModeNoCache:
+            return "Offline mode: No cached patterns found for this app."
+        }
+    }
+}
+
 /// AICategorizer provides AI-first categorization for captured screenshots.
 /// Called immediately at capture time to extract project/category/role information.
 @MainActor
@@ -10,6 +25,7 @@ final class AICategorizer: ObservableObject {
 
     private let claudeClient = ClaudeAPIClient.shared
     private let storageManager = StorageManager.shared
+    private let cacheManager = CacheManager.shared
 
     /// Confidence threshold below which suggestions are queued for user review
     private let confidenceThreshold: Double = 0.7
@@ -17,6 +33,7 @@ final class AICategorizer: ObservableObject {
     @Published var isProcessing = false
     @Published var lastCategorization: AICategorization?
     @Published var lastError: Error?
+    @Published var isOfflineMode = false
 
     private init() {}
 
@@ -24,6 +41,7 @@ final class AICategorizer: ObservableObject {
 
     /// Categorize a screenshot and update the session with AI results.
     /// Low-confidence results are queued as suggestions for user review.
+    /// Falls back to cached patterns when offline.
     func categorize(
         screenshot: NSImage,
         session: inout ActivitySession
@@ -36,20 +54,87 @@ final class AICategorizer: ObservableObject {
         let categories = try await storageManager.fetchAllCategories()
         let existingProjects = try await storageManager.fetchAllProjects()
 
-        // Call Claude API for categorization
-        let categorization = try await claudeClient.generateRoleAwareScreenshotSummary(
-            screenshot: screenshot,
-            appName: session.appName,
-            windowTitle: session.windowTitle,
-            availableRoles: roles,
-            availableCategories: categories,
-            existingProjects: existingProjects
-        )
+        // Try online categorization first
+        var categorization: AICategorization?
+        var usedOfflineMode = false
+
+        do {
+            // Call Claude API for categorization
+            categorization = try await claudeClient.generateRoleAwareScreenshotSummary(
+                screenshot: screenshot,
+                appName: session.appName,
+                windowTitle: session.windowTitle,
+                availableRoles: roles,
+                availableCategories: categories,
+                existingProjects: existingProjects
+            )
+            isOfflineMode = false
+        } catch {
+            // API failed - try offline mode
+            print("⚠️ API categorization failed, falling back to cache: \(error.localizedDescription)")
+            categorization = try await offlineCategorization(
+                appName: session.appName,
+                windowTitle: session.windowTitle
+            )
+            usedOfflineMode = true
+            isOfflineMode = true
+            lastError = error
+        }
+
+        guard let categorization = categorization else {
+            throw CategorizationError.noCategorizationAvailable
+        }
 
         lastCategorization = categorization
 
+        // Cache successful online categorizations for future offline use
+        if !usedOfflineMode {
+            try? await cacheManager.cacheCategorization(
+                appName: session.appName ?? "Unknown",
+                windowTitle: session.windowTitle,
+                projectName: categorization.projectName,
+                projectRole: categorization.projectRole,
+                workCategory: categorization.workCategory,
+                patterns: categorization.suggestedPatterns,
+                confidence: categorization.confidence
+            )
+        }
+
         // Process the categorization result
         try await applyCategorization(categorization, to: &session, existingProjects: existingProjects)
+    }
+
+    /// Offline categorization using cached patterns
+    private func offlineCategorization(
+        appName: String?,
+        windowTitle: String?
+    ) async throws -> AICategorization? {
+        guard let appName = appName else { return nil }
+
+        // Look for cached categorization
+        guard let cached = try await cacheManager.findMatchingCategorization(
+            appName: appName,
+            windowTitle: windowTitle
+        ) else {
+            return nil
+        }
+
+        // Increment use count for this cache entry
+        if let id = cached.id {
+            try? await cacheManager.incrementUseCount(for: id)
+        }
+
+        // Convert cached entry to AICategorization
+        return AICategorization(
+            projectName: cached.projectName,
+            projectRole: cached.projectRole,
+            workCategory: cached.workCategory,
+            confidence: cached.confidence * 0.8, // Reduce confidence for cached results
+            reasoning: "Categorized using cached pattern (offline mode)",
+            suggestedPatterns: cached.patterns,
+            keyInsights: ["Offline categorization based on previous activity"],
+            summary: "Working on \(cached.projectName)"
+        )
     }
 
     // MARK: - Apply Categorization

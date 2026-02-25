@@ -45,6 +45,11 @@ final class MigrationManager {
             try await linkSessionsToProjects(db)
             try await setMigrationVersion(db, version: 3)
         }
+
+        if currentVersion < 4 {
+            try await addTimelineSegmentsColumn(db)
+            try await setMigrationVersion(db, version: 4)
+        }
     }
 
     // MARK: - Migration Version Tracking
@@ -239,6 +244,22 @@ final class MigrationManager {
 
             // Delete source project
             try Project.deleteOne(db, key: sourceId)
+        }
+    }
+
+    // MARK: - Migration 4: Add Timeline Segments Column
+
+    /// Add timelineSegmentsJSON column to comprehensive_analyses table
+    private func addTimelineSegmentsColumn(_ db: DatabaseQueue) async throws {
+        try await db.write { db in
+            // Check if column already exists
+            let columns = try db.columns(in: "comprehensive_analyses")
+            if !columns.contains(where: { $0.name == "timelineSegmentsJSON" }) {
+                try db.execute(sql: """
+                    ALTER TABLE comprehensive_analyses
+                    ADD COLUMN timelineSegmentsJSON TEXT NOT NULL DEFAULT '[]'
+                    """)
+            }
         }
     }
 

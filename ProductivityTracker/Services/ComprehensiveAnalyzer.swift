@@ -6,6 +6,7 @@ import Combine
 struct ComprehensiveAnalysisResponse: Codable {
     let overview: String
     let workSegments: [WorkSegmentResponse]
+    let timelineSegments: [TimelineSegmentResponse]?
     let contextAnalysis: String
     let keyInsights: [String]
     let recommendations: [String]
@@ -17,6 +18,14 @@ struct WorkSegmentResponse: Codable {
     let duration: TimeInterval
     let focusQuality: String?
     let sessionIds: [Int64]
+}
+
+struct TimelineSegmentResponse: Codable {
+    let startTime: String
+    let endTime: String
+    let activityType: String
+    let categoryColor: String
+    let appName: String?
 }
 
 /// ComprehensiveAnalyzer orchestrates Claude-powered analysis of productivity data
@@ -88,11 +97,29 @@ final class ComprehensiveAnalyzer: ObservableObject {
             )
         }
 
+        // Convert timeline segments
+        let timelineSegments = (response.timelineSegments ?? []).compactMap { segment -> TimelineSegment? in
+            let dateFormatter = ISO8601DateFormatter()
+            guard let startTime = dateFormatter.date(from: segment.startTime),
+                  let endTime = dateFormatter.date(from: segment.endTime) else {
+                return nil
+            }
+
+            return TimelineSegment(
+                startTime: startTime,
+                endTime: endTime,
+                activityType: segment.activityType,
+                categoryColor: segment.categoryColor,
+                appName: segment.appName
+            )
+        }
+
         let analysis = ComprehensiveAnalysis(
             date: date,
             period: period,
             overview: response.overview,
             workSegments: workSegments,
+            timelineSegments: timelineSegments,
             contextAnalysis: response.contextAnalysis,
             keyInsights: response.keyInsights,
             recommendations: response.recommendations,

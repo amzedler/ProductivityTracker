@@ -464,13 +464,20 @@ final class ClaudeAPIClient: ObservableObject {
            - Duration and focus quality assessment (excellent/good/fragmented)
            - Session IDs that belong to this segment
 
-        2. CONTEXT SWITCHING ANALYSIS: Identify meaningful context switches
+        2. CREATE TIMELINE: Build a visual timeline of activities by breaking sessions into
+           activity blocks. For each block provide:
+           - Activity type (e.g., "Coding", "Meeting", "Research", "Email")
+           - Start and end times (as ISO 8601 strings)
+           - A hex color code for visualization (use consistent colors per activity type)
+           - App name if relevant
+
+        3. CONTEXT SWITCHING ANALYSIS: Identify meaningful context switches
            (not just app switches). How fragmented was the work? What patterns emerge?
 
-        3. KEY INSIGHTS: 3-5 specific observations about work patterns,
+        4. KEY INSIGHTS: 3-5 specific observations about work patterns,
            productivity, or focus quality. Be concrete and actionable.
 
-        4. RECOMMENDATIONS: 2-4 actionable suggestions to improve focus or productivity.
+        5. RECOMMENDATIONS: 2-4 actionable suggestions to improve focus or productivity.
            Base these on the actual data patterns you observe.
 
         Return your response as structured JSON with this exact format:
@@ -483,6 +490,15 @@ final class ClaudeAPIClient: ObservableObject {
               "duration": <seconds as number>,
               "focusQuality": "excellent|good|fragmented",
               "sessionIds": [<session IDs as numbers>]
+            }
+          ],
+          "timelineSegments": [
+            {
+              "startTime": "2026-02-25T09:00:00Z",
+              "endTime": "2026-02-25T10:30:00Z",
+              "activityType": "Coding",
+              "categoryColor": "#4A90E2",
+              "appName": "Xcode"
             }
           ],
           "contextAnalysis": "Analysis of context switching patterns",

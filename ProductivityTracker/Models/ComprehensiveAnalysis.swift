@@ -67,6 +67,50 @@ struct WorkSegment: Codable, Identifiable, Hashable {
     }
 }
 
+/// TimelineSegment represents an activity block on the timeline
+struct TimelineSegment: Codable, Identifiable, Hashable {
+    var id: UUID
+    var startTime: Date
+    var endTime: Date
+    var activityType: String      // e.g., "Coding", "Meeting", "Research"
+    var categoryColor: String      // Hex color for visualization
+    var appName: String?
+    var workSegmentId: UUID?       // Links to a WorkSegment
+
+    init(
+        id: UUID = UUID(),
+        startTime: Date,
+        endTime: Date,
+        activityType: String,
+        categoryColor: String,
+        appName: String? = nil,
+        workSegmentId: UUID? = nil
+    ) {
+        self.id = id
+        self.startTime = startTime
+        self.endTime = endTime
+        self.activityType = activityType
+        self.categoryColor = categoryColor
+        self.appName = appName
+        self.workSegmentId = workSegmentId
+    }
+
+    var duration: TimeInterval {
+        endTime.timeIntervalSince(startTime)
+    }
+
+    var formattedDuration: String {
+        let minutes = Int(duration) / 60
+        if minutes < 60 {
+            return "\(minutes)m"
+        } else {
+            let hours = minutes / 60
+            let mins = minutes % 60
+            return "\(hours)h \(mins)m"
+        }
+    }
+}
+
 /// AnalysisExchange represents a Q&A exchange about the analysis
 struct AnalysisExchange: Codable, Identifiable, Hashable {
     var id: UUID
@@ -96,6 +140,7 @@ struct ComprehensiveAnalysis: Codable, Identifiable, Hashable {
     // Claude's structured analysis
     var overview: String
     var workSegments: [WorkSegment]  // Claude-defined groups
+    var timelineSegments: [TimelineSegment]  // Timeline view of activities
     var contextAnalysis: String
     var keyInsights: [String]
     var recommendations: [String]
@@ -117,6 +162,7 @@ struct ComprehensiveAnalysis: Codable, Identifiable, Hashable {
         period: TimePeriod = .today,
         overview: String = "",
         workSegments: [WorkSegment] = [],
+        timelineSegments: [TimelineSegment] = [],
         contextAnalysis: String = "",
         keyInsights: [String] = [],
         recommendations: [String] = [],
@@ -132,6 +178,7 @@ struct ComprehensiveAnalysis: Codable, Identifiable, Hashable {
         self.period = period
         self.overview = overview
         self.workSegments = workSegments
+        self.timelineSegments = timelineSegments
         self.contextAnalysis = contextAnalysis
         self.keyInsights = keyInsights
         self.recommendations = recommendations
@@ -163,7 +210,7 @@ struct ComprehensiveAnalysis: Codable, Identifiable, Hashable {
 extension ComprehensiveAnalysis {
     enum CodingKeys: String, CodingKey {
         case id, date, period
-        case overview, workSegmentsJSON, contextAnalysis
+        case overview, workSegmentsJSON, timelineSegmentsJSON, contextAnalysis
         case keyInsightsJSON, recommendationsJSON
         case totalTime, sessionCount, analysisTimestamp
         case followUpExchangesJSON
@@ -181,6 +228,9 @@ extension ComprehensiveAnalysis {
         // Decode JSON strings to arrays
         let workSegmentsJSON = try container.decode(String.self, forKey: .workSegmentsJSON)
         workSegments = Self.decodeWorkSegments(workSegmentsJSON)
+
+        let timelineSegmentsJSON = try container.decodeIfPresent(String.self, forKey: .timelineSegmentsJSON) ?? "[]"
+        timelineSegments = Self.decodeTimelineSegments(timelineSegmentsJSON)
 
         contextAnalysis = try container.decode(String.self, forKey: .contextAnalysis)
 
@@ -211,6 +261,7 @@ extension ComprehensiveAnalysis {
 
         // Encode arrays to JSON strings
         try container.encode(Self.encodeWorkSegments(workSegments), forKey: .workSegmentsJSON)
+        try container.encode(Self.encodeTimelineSegments(timelineSegments), forKey: .timelineSegmentsJSON)
         try container.encode(contextAnalysis, forKey: .contextAnalysis)
         try container.encode(Self.encodeStringArray(keyInsights), forKey: .keyInsightsJSON)
         try container.encode(Self.encodeStringArray(recommendations), forKey: .recommendationsJSON)
@@ -259,6 +310,22 @@ extension ComprehensiveAnalysis {
         return array
     }
 
+    private static func encodeTimelineSegments(_ segments: [TimelineSegment]) -> String {
+        guard let data = try? JSONEncoder().encode(segments),
+              let string = String(data: data, encoding: .utf8) else {
+            return "[]"
+        }
+        return string
+    }
+
+    private static func decodeTimelineSegments(_ json: String) -> [TimelineSegment] {
+        guard let data = json.data(using: .utf8),
+              let array = try? JSONDecoder().decode([TimelineSegment].self, from: data) else {
+            return []
+        }
+        return array
+    }
+
     private static func encodeExchanges(_ exchanges: [AnalysisExchange]) -> String {
         guard let data = try? JSONEncoder().encode(exchanges),
               let string = String(data: data, encoding: .utf8) else {
@@ -282,7 +349,7 @@ extension ComprehensiveAnalysis: FetchableRecord, MutablePersistableRecord {
 
     enum Columns: String, ColumnExpression {
         case id, date, period
-        case overview, workSegmentsJSON, contextAnalysis
+        case overview, workSegmentsJSON, timelineSegmentsJSON, contextAnalysis
         case keyInsightsJSON, recommendationsJSON
         case totalTime, sessionCount, analysisTimestamp
         case followUpExchangesJSON

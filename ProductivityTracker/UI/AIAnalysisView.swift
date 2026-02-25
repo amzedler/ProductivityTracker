@@ -182,6 +182,14 @@ struct AIAnalysisView: View {
             // Overview card
             AnalysisOverviewCard(analysis: analysis)
 
+            // Timeline view
+            if !analysis.timelineSegments.isEmpty {
+                TimelineView(
+                    segments: analysis.timelineSegments,
+                    totalDuration: analysis.totalTime
+                )
+            }
+
             // Work segments
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
