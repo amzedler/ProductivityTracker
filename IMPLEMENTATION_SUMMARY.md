@@ -1,5 +1,7 @@
 # Implementation Summary: Claude-Powered Dynamic Reporting
 
+> **Note**: This document covers the Claude AI analysis feature. For recent UI improvements (menu bar enhancements, custom app icon), see [CHANGELOG.md](./CHANGELOG.md). For general project info, see [README.md](./README.md).
+
 ## Overview
 
 Successfully implemented a comprehensive Claude-powered analysis system that replaces the rigid reporting tabs with dynamic, intelligent insights.

@@ -1,5 +1,7 @@
 # Quick Start Guide
 
+> **Note**: This guide covers the Claude AI analysis feature. For complete project documentation and recent updates, see [README.md](./README.md) and [CHANGELOG.md](./CHANGELOG.md).
+
 ## What Was Built
 
 I've implemented a Claude-powered dynamic reporting system that replaces your rigid reporting tabs with intelligent, adaptive analysis.
