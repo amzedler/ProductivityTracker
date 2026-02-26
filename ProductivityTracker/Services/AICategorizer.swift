@@ -27,7 +27,7 @@ final class AICategorizer: ObservableObject {
     private let claudeClient = ClaudeAPIClient.shared
     private let storageManager = StorageManager.shared
     // TODO: Uncomment after adding CacheManager.swift to Xcode project
-    // private let cacheManager = CacheManager.shared
+    private let cacheManager = CacheManager.shared
 
     /// Confidence threshold below which suggestions are queued for user review
     private let confidenceThreshold: Double = 0.7

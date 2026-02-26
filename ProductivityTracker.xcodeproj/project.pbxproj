@@ -13,6 +13,7 @@
 		229B348024814DBE91AC93F5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98BB6E532A4E5E803C2766 /* SettingsView.swift */; };
 		2E01772B269D49789CF99977 /* InsightFeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15572DCB11A45B3AFB7AE08 /* InsightFeedbackService.swift */; };
 		3646553BE5B9451085F6E690 /* WorkSegmentCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17480C6882C64CB2BC8543AE /* WorkSegmentCard.swift */; };
+		3990C8237A5C4236AEE6984F /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C20BFE7F864A2E919FF3A2 /* KeychainHelper.swift */; };
 		493800BB36574B3DA682846E /* ActivitySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB07DBFBE904DD7A48F340F /* ActivitySession.swift */; };
 		4B58DF52518B49208E69266F /* AnalysisOverviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BDF498B9824D7CBBE92D19 /* AnalysisOverviewCard.swift */; };
 		4FBA0A47F64446F1A701B3DC /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC053D8A4FE453BB216AC26 /* DashboardView.swift */; };
@@ -39,7 +40,8 @@
 		F66EDAFE4A764E2495061D27 /* WorkCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D930368ED14842AA84869C /* WorkCategoriesView.swift */; };
 		F7AEDC702F46528E00F7B6DA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F7AEDC6F2F46528E00F7B6DA /* Info.plist */; };
 		F7EA5CAA2F4F4B4000B4E4B3 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = F07956FC354C472A90F7583B /* GRDB */; };
-		3990C8237A5C4236AEE6984F /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C20BFE7F864A2E919FF3A2 /* KeychainHelper.swift */; };
+		F7EA5CAC2F50A1BC00B4E4B3 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EA5CAB2F50A1BC00B4E4B3 /* CacheManager.swift */; };
+		F7EA5CAE2F50A1C800B4E4B3 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EA5CAD2F50A1C800B4E4B3 /* TimelineView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,9 +74,11 @@
 		39A3890626BA479C92F7AC2A /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		4B98BB6E532A4E5E803C2766 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4DC053D8A4FE453BB216AC26 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		64C20BFE7F864A2E919FF3A2 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		6DB07DBFBE904DD7A48F340F /* ActivitySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitySession.swift; sourceTree = "<group>"; };
 		73D930368ED14842AA84869C /* WorkCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkCategoriesView.swift; sourceTree = "<group>"; };
 		804D672D261345CD966CE466 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		8366E69351E338EDF09189E1 /* ProductivityTracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProductivityTracker.entitlements; sourceTree = "<group>"; };
 		8662BD48D8794C0FA6563CDA /* WorkCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkCategory.swift; sourceTree = "<group>"; };
 		89491654EBA44C3F87A67624 /* AICategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICategorizer.swift; sourceTree = "<group>"; };
 		96C5A25E7171409CA8902DCD /* InsightsAndRecommendations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsAndRecommendations.swift; sourceTree = "<group>"; };
@@ -94,8 +98,8 @@
 		F7AEDC4B2F46517000F7B6DA /* ProductivityTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProductivityTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7AEDC552F46517000F7B6DA /* ProductivityTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProductivityTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7AEDC6F2F46528E00F7B6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		64C20BFE7F864A2E919FF3A2 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
-		8366E69351E338EDF09189E1 /* ProductivityTracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProductivityTracker.entitlements; sourceTree = "<group>"; };
+		F7EA5CAB2F50A1BC00B4E4B3 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		F7EA5CAD2F50A1C800B4E4B3 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,8 +142,8 @@
 				F7AEDC3E2F46516E00F7B6DA /* ProductivityTracker.app */,
 				F7AEDC4B2F46517000F7B6DA /* ProductivityTrackerTests.xctest */,
 				F7AEDC552F46517000F7B6DA /* ProductivityTrackerUITests.xctest */,
-			
-				8366E69351E338EDF09189E1 /* ProductivityTracker.entitlements */,);
+				8366E69351E338EDF09189E1 /* ProductivityTracker.entitlements */,
+			);
 			name = Products;
 			sourceTree = "<group>";
 		};
@@ -162,6 +166,7 @@
 		F7AEDC6B2F4651FC00F7B6DA /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				F7EA5CAB2F50A1BC00B4E4B3 /* CacheManager.swift */,
 				89491654EBA44C3F87A67624 /* AICategorizer.swift */,
 				B601425A9FEA418997C3F8BC /* CaptureService.swift */,
 				14F603BEA68D4C4EA61B920C /* ClaudeAPIClient.swift */,
@@ -177,6 +182,7 @@
 		F7AEDC6C2F46520100F7B6DA /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				F7EA5CAD2F50A1C800B4E4B3 /* TimelineView.swift */,
 				0CA4DD4CA8D24ACCAD7BE866 /* AIAnalysisView.swift */,
 				251D31D8D7E741EA8859A80C /* AISuggestionsView.swift */,
 				B7BDF498B9824D7CBBE92D19 /* AnalysisOverviewCard.swift */,
@@ -196,7 +202,6 @@
 			isa = PBXGroup;
 			children = (
 				804D672D261345CD966CE466 /* Extensions.swift */,
-			
 				64C20BFE7F864A2E919FF3A2 /* KeychainHelper.swift */,
 			);
 			path = Utilities;
@@ -371,6 +376,7 @@
 				B94024ED0AC34823B5BD017E /* ComprehensiveAnalyzer.swift in Sources */,
 				2E01772B269D49789CF99977 /* InsightFeedbackService.swift in Sources */,
 				72C19B8CFBCA486D9E67D1D2 /* MigrationManager.swift in Sources */,
+				F7EA5CAE2F50A1C800B4E4B3 /* TimelineView.swift in Sources */,
 				041417178475431AB8B5B860 /* StorageManager.swift in Sources */,
 				DCEFA5F110454E4590A67B3E /* WindowFocusMonitor.swift in Sources */,
 				C8C5A32AEAA64542B936BCFA /* AIAnalysisView.swift in Sources */,
@@ -383,9 +389,11 @@
 				7ADF37E2AA6C4A47ABC5E5ED /* ProjectsSettingsView.swift in Sources */,
 				229B348024814DBE91AC93F5 /* SettingsView.swift in Sources */,
 				F66EDAFE4A764E2495061D27 /* WorkCategoriesView.swift in Sources */,
+				F7EA5CAC2F50A1BC00B4E4B3 /* CacheManager.swift in Sources */,
 				3646553BE5B9451085F6E690 /* WorkSegmentCard.swift in Sources */,
 				90A9924B82844B11AD01A835 /* Extensions.swift in Sources */,
-				3990C8237A5C4236AEE6984F /* KeychainHelper.swift in Sources */);
+				3990C8237A5C4236AEE6984F /* KeychainHelper.swift in Sources */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F7AEDC472F46517000F7B6DA /* Sources */ = {
@@ -547,6 +555,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ProductivityTracker/ProductivityTracker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -573,8 +582,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-		
-				CODE_SIGN_ENTITLEMENTS = ProductivityTracker/ProductivityTracker.entitlements;	};
+			};
 			name = Debug;
 		};
 		F7AEDC612F46517000F7B6DA /* Release */ = {

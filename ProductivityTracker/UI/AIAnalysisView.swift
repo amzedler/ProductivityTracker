@@ -182,14 +182,13 @@ struct AIAnalysisView: View {
             // Overview card
             AnalysisOverviewCard(analysis: analysis)
 
-            // TODO: Uncomment after adding TimelineView.swift to Xcode project
             // Timeline view
-            // if !analysis.timelineSegments.isEmpty {
-            //     TimelineView(
-            //         segments: analysis.timelineSegments,
-            //         totalDuration: analysis.totalTime
-            //     )
-            // }
+            if !analysis.timelineSegments.isEmpty {
+                TimelineView(
+                    segments: analysis.timelineSegments,
+                    totalDuration: analysis.totalTime
+                )
+            }
 
             // Work segments
             VStack(alignment: .leading, spacing: 12) {

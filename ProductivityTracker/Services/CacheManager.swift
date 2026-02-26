@@ -1,5 +1,6 @@
 import Foundation
 import GRDB
+import Combine
 
 /// CachedCategorization stores a recent AI categorization for offline use
 struct CachedCategorization: Codable, Identifiable {
@@ -278,8 +279,8 @@ final class CacheManager: ObservableObject {
 
             // If still too large, keep only the most recent and most used
             let count = try CachedCategorization.fetchCount(db)
-            if count > maxCacheSize {
-                let keepCount = Int(Double(maxCacheSize) * 0.8) // Keep 80% of max
+            if count > self.maxCacheSize {
+                let keepCount = Int(Double(self.maxCacheSize) * 0.8) // Keep 80% of max
 
                 try db.execute(sql: """
                     DELETE FROM cached_categorizations
