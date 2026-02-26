@@ -42,6 +42,7 @@
 		F7EA5CAA2F4F4B4000B4E4B3 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = F07956FC354C472A90F7583B /* GRDB */; };
 		F7EA5CAC2F50A1BC00B4E4B3 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EA5CAB2F50A1BC00B4E4B3 /* CacheManager.swift */; };
 		F7EA5CAE2F50A1C800B4E4B3 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EA5CAD2F50A1C800B4E4B3 /* TimelineView.swift */; };
+		E01A58D176BE463FA7B6E61C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3554A699CE26484F96B6476E /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +101,7 @@
 		F7AEDC6F2F46528E00F7B6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F7EA5CAB2F50A1BC00B4E4B3 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		F7EA5CAD2F50A1C800B4E4B3 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+		3554A699CE26484F96B6476E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,7 +218,8 @@
 				F7AEDC6C2F46520100F7B6DA /* UI */,
 				F7AEDC6B2F4651FC00F7B6DA /* Services */,
 				F7AEDC6A2F4651EE00F7B6DA /* Models */,
-			);
+							3554A699CE26484F96B6476E /* Assets.xcassets */,
+);
 			path = ProductivityTracker;
 			sourceTree = "<group>";
 		};
@@ -336,7 +339,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7AEDC702F46528E00F7B6DA /* Info.plist in Resources */,
-			);
+							E01A58D176BE463FA7B6E61C /* Assets.xcassets in Resources */,
+);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F7AEDC492F46517000F7B6DA /* Resources */ = {
