@@ -48,6 +48,9 @@ final class AppState: ObservableObject {
     @Published var pendingSuggestionsCount = 0
     @Published var currentSession: ActivitySession?
     @Published var lastError: String?
+    @Published var todayTrackingDuration: TimeInterval = 0
+
+    private var durationUpdateTimer: Timer?
 
     private init() {
         Task {
@@ -66,6 +69,9 @@ final class AppState: ObservableObject {
             // Load pending suggestions count
             pendingSuggestionsCount = try await storageManager.pendingSuggestionsCount()
 
+            // Load today's tracking duration
+            await updateTodayTrackingDuration()
+
             isInitialized = true
         } catch {
             lastError = error.localizedDescription
@@ -80,6 +86,7 @@ final class AppState: ObservableObject {
             windowMonitor.startMonitoring()
             isCapturing = true
             currentSession = captureService.currentSession
+            startDurationTimer()
         } catch {
             lastError = error.localizedDescription
         }
@@ -91,6 +98,8 @@ final class AppState: ObservableObject {
             windowMonitor.stopMonitoring()
             isCapturing = false
             currentSession = nil
+            stopDurationTimer()
+            await updateTodayTrackingDuration()
         } catch {
             lastError = error.localizedDescription
         }
@@ -98,5 +107,38 @@ final class AppState: ObservableObject {
 
     func refreshPendingSuggestionsCount() async {
         pendingSuggestionsCount = (try? await storageManager.pendingSuggestionsCount()) ?? 0
+    }
+
+    // MARK: - Tracking Duration
+
+    private func startDurationTimer() {
+        // Update duration every 10 seconds while tracking
+        durationUpdateTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                await self?.updateTodayTrackingDuration()
+            }
+        }
+        Task {
+            await updateTodayTrackingDuration()
+        }
+    }
+
+    private func stopDurationTimer() {
+        durationUpdateTimer?.invalidate()
+        durationUpdateTimer = nil
+    }
+
+    func updateTodayTrackingDuration() async {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? Date()
+
+        do {
+            let sessions = try await storageManager.fetchSessions(from: startOfDay, to: endOfDay)
+            let totalDuration = sessions.reduce(0) { $0 + $1.duration }
+            todayTrackingDuration = totalDuration
+        } catch {
+            print("Error calculating today's tracking duration: \(error)")
+        }
     }
 }

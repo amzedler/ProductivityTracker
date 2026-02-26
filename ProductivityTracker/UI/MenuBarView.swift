@@ -39,9 +39,30 @@ struct MenuBarView: View {
                 Text("Productivity Tracker")
                     .font(.headline)
 
-                Text(appState.isCapturing ? "Tracking active" : "Not tracking")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                if appState.isCapturing {
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 8, height: 8)
+                        Text("Tracking: \(formatDuration(appState.todayTrackingDuration))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .monospacedDigit()
+                    }
+                } else {
+                    HStack(spacing: 4) {
+                        if appState.todayTrackingDuration > 0 {
+                            Text("Tracked today: \(formatDuration(appState.todayTrackingDuration))")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .monospacedDigit()
+                        } else {
+                            Text("Not tracking")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
             }
 
             Spacer()
@@ -135,26 +156,57 @@ struct MenuBarView: View {
     }
 
     private var footerSection: some View {
-        HStack {
+        HStack(spacing: 8) {
             Button(action: {
                 openSettings()
             }) {
-                Image(systemName: "gear")
+                HStack {
+                    Image(systemName: "gear")
+                        .font(.body)
+                    Text("Settings")
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .background(Color.gray.opacity(0.15))
+                .cornerRadius(8)
             }
             .buttonStyle(.plain)
-
-            Spacer()
 
             Button(action: {
                 NSApplication.shared.terminate(nil)
             }) {
-                Text("Quit")
-                    .font(.caption)
+                HStack {
+                    Image(systemName: "power")
+                        .font(.body)
+                    Text("Quit")
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .background(Color.red.opacity(0.15))
+                .cornerRadius(8)
             }
             .buttonStyle(.plain)
+            .foregroundColor(.red)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
+    }
+
+    // MARK: - Helper Methods
+
+    private func formatDuration(_ duration: TimeInterval) -> String {
+        let hours = Int(duration) / 3600
+        let minutes = (Int(duration) % 3600) / 60
+
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
     }
 }
 
