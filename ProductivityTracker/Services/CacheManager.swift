@@ -104,7 +104,7 @@ final class CacheManager: ObservableObject {
     @Published var isOfflineMode = false
     @Published var cacheSize: Int = 0
 
-    private var dbQueue: DatabaseQueue?
+    private let storageManager: StorageManager
 
     // Cache retention period (keep patterns for 30 days)
     private let retentionPeriod: TimeInterval = 30 * 24 * 60 * 60
@@ -113,6 +113,7 @@ final class CacheManager: ObservableObject {
     private let maxCacheSize = 1000
 
     private init() {
+        self.storageManager = StorageManager.shared
         Task {
             await initialize()
         }
@@ -122,42 +123,14 @@ final class CacheManager: ObservableObject {
 
     func initialize() async {
         do {
-            let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            let appFolder = appSupport.appendingPathComponent("ProductivityTracker", isDirectory: true)
-            let databasePath = appFolder.appendingPathComponent("productivity.sqlite")
-
-            var config = Configuration()
-            config.foreignKeysEnabled = true
-            dbQueue = try DatabaseQueue(path: databasePath.path, configuration: config)
-
-            try await createCacheTable()
             cacheSize = try await getCacheSize()
         } catch {
             print("❌ CacheManager initialization error: \(error)")
         }
     }
 
-    private func createCacheTable() async throws {
-        guard let db = dbQueue else { return }
-
-        try await db.write { db in
-            try db.create(table: "cached_categorizations", ifNotExists: true) { t in
-                t.autoIncrementedPrimaryKey("id")
-                t.column("appName", .text).notNull()
-                t.column("windowTitle", .text)
-                t.column("projectName", .text).notNull()
-                t.column("projectRole", .text).notNull()
-                t.column("workCategory", .text).notNull()
-                t.column("patternsJSON", .text).notNull().defaults(to: "[]")
-                t.column("confidence", .double).notNull()
-                t.column("timestamp", .datetime).notNull()
-                t.column("useCount", .integer).notNull().defaults(to: 0)
-            }
-
-            // Create indexes for fast pattern matching
-            try db.create(index: "idx_cache_app", on: "cached_categorizations", columns: ["appName"], ifNotExists: true)
-            try db.create(index: "idx_cache_timestamp", on: "cached_categorizations", columns: ["timestamp"], ifNotExists: true)
-        }
+    private var dbQueue: DatabaseQueue? {
+        storageManager.getDatabaseQueue()
     }
 
     // MARK: - Cache Operations

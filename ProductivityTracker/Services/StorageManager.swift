@@ -38,6 +38,11 @@ final class StorageManager: ObservableObject {
         isInitialized = true
     }
 
+    /// Get database queue for use by other services (e.g., CacheManager)
+    func getDatabaseQueue() -> DatabaseQueue? {
+        return dbQueue
+    }
+
     private func createTables() async throws {
         guard let dbQueue = dbQueue else { return }
 
@@ -174,6 +179,20 @@ final class StorageManager: ObservableObject {
                 t.column("updatedAt", .datetime).notNull()
             }
 
+            // Cached Categorizations table - for offline tracking
+            try db.create(table: "cached_categorizations", ifNotExists: true) { t in
+                t.autoIncrementedPrimaryKey("id")
+                t.column("appName", .text).notNull()
+                t.column("windowTitle", .text)
+                t.column("projectName", .text).notNull()
+                t.column("projectRole", .text).notNull()
+                t.column("workCategory", .text).notNull()
+                t.column("patternsJSON", .text).notNull().defaults(to: "[]")
+                t.column("confidence", .double).notNull()
+                t.column("timestamp", .datetime).notNull()
+                t.column("useCount", .integer).notNull().defaults(to: 0)
+            }
+
             // Create indexes for better query performance
             try db.create(index: "idx_sessions_startTime", on: "activity_sessions", columns: ["startTime"], ifNotExists: true)
             try db.create(index: "idx_sessions_projectId", on: "activity_sessions", columns: ["projectId"], ifNotExists: true)
@@ -184,6 +203,8 @@ final class StorageManager: ObservableObject {
             try db.create(index: "idx_feedback_type", on: "insight_feedback", columns: ["insightType"], ifNotExists: true)
             try db.create(index: "idx_analyses_date_period", on: "comprehensive_analyses", columns: ["date", "period"], ifNotExists: true)
             try db.create(index: "idx_analyses_timestamp", on: "comprehensive_analyses", columns: ["analysisTimestamp"], ifNotExists: true)
+            try db.create(index: "idx_cache_app", on: "cached_categorizations", columns: ["appName"], ifNotExists: true)
+            try db.create(index: "idx_cache_timestamp", on: "cached_categorizations", columns: ["timestamp"], ifNotExists: true)
         }
     }
 
