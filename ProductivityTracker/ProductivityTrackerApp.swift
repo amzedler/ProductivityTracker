@@ -11,8 +11,16 @@ struct ProductivityTrackerApp: App {
             MenuBarView()
                 .environmentObject(appState)
         } label: {
-            Image(systemName: appState.isCapturing ? "record.circle.fill" : "clock.fill")
-                .symbolRenderingMode(.hierarchical)
+            HStack(spacing: 4) {
+                Image(systemName: appState.isCapturing ? "record.circle.fill" : "clock.fill")
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundColor(appState.isCapturing ? .red : .primary)
+
+                if appState.todayTrackingDuration > 0 {
+                    Text(formatToolbarDuration(appState.todayTrackingDuration))
+                        .font(.system(size: 13, weight: .medium, design: .monospaced))
+                }
+            }
         }
         .menuBarExtraStyle(.window)
 
@@ -27,6 +35,21 @@ struct ProductivityTrackerApp: App {
         }
         .commands {
             CommandGroup(replacing: .newItem) {}
+        }
+    }
+
+    // MARK: - Helper Methods
+
+    private func formatToolbarDuration(_ duration: TimeInterval) -> String {
+        let hours = Int(duration) / 3600
+        let minutes = (Int(duration) % 3600) / 60
+
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else if minutes > 0 {
+            return "\(minutes)m"
+        } else {
+            return "0m"
         }
     }
 }
