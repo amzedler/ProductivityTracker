@@ -168,6 +168,7 @@ final class StorageManager: ObservableObject {
                 t.column("period", .text).notNull()
                 t.column("overview", .text).notNull()
                 t.column("workSegmentsJSON", .text).notNull().defaults(to: "[]")
+                t.column("timelineSegmentsJSON", .text).notNull().defaults(to: "[]")
                 t.column("contextAnalysis", .text).notNull()
                 t.column("keyInsightsJSON", .text).notNull().defaults(to: "[]")
                 t.column("recommendationsJSON", .text).notNull().defaults(to: "[]")
